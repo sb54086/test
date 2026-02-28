@@ -1,271 +1,1040 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Royal Indian Wedding</title>
+  <!--
+    index.html - Single-file responsive wedding site "Malvi & Subrat"
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    USAGE NOTE:
+    - Replace gallery images: edit the image URLs in the gallery <img> elements.
+      This file uses stable picsum.photos images to avoid transient 503 errors.
+      To use Unsplash queries instead, replace src and data-full with:
+        https://source.unsplash.com/800x600/?amalfi,wedding
+        https://source.unsplash.com/1600x1200/?amalfi,wedding
+      but note those query endpoints can occasionally return errors.
+    - Change colors: edit CSS variables near the top of the <style> block (--accent, --muted, --bg, --card).
+    - Change names, date, venue, schedule: search for placeholders (Malvi & Subrat, 12 June 2026, Angul, Odisha, India).
+    - To enable server-side RSVP: replace the localStorage save in the RSVP submit handler with a fetch() POST to your endpoint.
+    - This file uses Google Fonts (external). All other CSS/JS is embedded.
+    - Map: embedded Google Maps iframe is centered on Angul, Odisha, India. If you prefer a different map provider, replace the iframe src.
+  -->
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    scroll-behavior:smooth;
-    font-family: 'Poppins', sans-serif;
-}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Malvi & Subrat — Wedding in Angul, Odisha, India. Join us for a warm, elegant celebration." />
+  <meta name="theme-color" content="#E07A5F" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Malvi & Subrat — Wedding" />
+  <meta property="og:description" content="Join Malvi & Subrat for their wedding in Angul, Odisha, India. Ceremony, reception, and RSVP." />
+  <meta property="og:image" content="https://picsum.photos/id/1018/1600/900" />
+  <meta property="og:type" content="website" />
+  <title>Malvi & Subrat — Wedding</title>
 
-body{
-    background:#fff8f0;
-    color:#5a2a27;
-}
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-/* NAVBAR */
-nav{
-    position:fixed;
-    width:100%;
-    top:0;
-    background:rgba(128,0,0,0.95);
-    padding:15px 0;
-    text-align:center;
-    z-index:1000;
-}
+  <style>
+    /* =========================
+       THEME VARIABLES
+       Edit these to change palette and basic layout.
+    ========================= */
+    :root{
+      --accent: #E07A5F; /* warm terracotta */
+      --muted: #7A8A4A;  /* olive tone */
+      --bg: #FBF8F5;     /* warm off-white */
+      --card: #FFFFFF;   /* card background */
+      --text: #2B2B2B;
+      --muted-text: #5A5A5A;
+      --radius: 12px;
+      --max-width: 1200px;
+      --transition: 300ms cubic-bezier(.2,.9,.3,1);
+      --shadow: 0 6px 18px rgba(43,43,43,0.08);
+      --focus: 3px solid rgba(224,122,95,0.18);
+    }
 
-nav a{
-    color:#ffd700;
-    margin:0 20px;
-    text-decoration:none;
-    font-weight:600;
-    transition:0.3s;
-}
+    /* =========================
+       Base / Reset
+    ========================= */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg), #fff);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      font-size:16px;
+      scroll-behavior:smooth;
+    }
 
-nav a:hover{
-    color:#fff;
-}
+    a { color: inherit; }
+    img { display:block; max-width:100%; height:auto; }
 
-/* HERO SECTION */
-.hero{
-    height:100vh;
-    background:url('https://images.unsplash.com/photo-1602576666092-bf6447a729fc') center/cover no-repeat;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    color:white;
-    animation:fadeIn 2s ease-in-out;
-}
+    /* =========================
+       Layout Grid & Responsiveness
+       Breakpoints: 1100px, 980px, 520px
+    ========================= */
+    .container{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:24px;
+      display:grid;
+      grid-template-columns: 1fr 360px; /* desktop two-column */
+      gap:28px;
+      align-items:start;
+    }
 
-.hero h1{
-    font-family:'Great Vibes', cursive;
-    font-size:4rem;
-    animation:slideDown 2s ease;
-}
+    header.site-header{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:12px 0;
+    }
 
-.hero p{
-    font-size:1.5rem;
-    margin-top:20px;
-}
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:var(--text);
+    }
+    .logo .mark{
+      width:48px;
+      height:48px;
+      border-radius:10px;
+      background:linear-gradient(135deg, rgba(224,122,95,0.12), rgba(122,138,74,0.08));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Playfair Display", serif;
+      font-weight:700;
+      color:var(--accent);
+      box-shadow:var(--shadow);
+    }
+    nav.main-nav{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    nav a{
+      text-decoration:none;
+      color:var(--muted-text);
+      padding:8px 12px;
+      border-radius:8px;
+      transition:all var(--transition);
+      font-weight:600;
+      font-size:0.95rem;
+    }
+    nav a:hover, nav a:focus{
+      color:var(--text);
+      background:rgba(0,0,0,0.03);
+      outline:none;
+      box-shadow:none;
+    }
 
-/* SECTION COMMON */
-section{
-    padding:80px 10%;
-    text-align:center;
-    opacity:0;
-    transform:translateY(50px);
-    transition:all 1s ease;
-}
-
-section.show{
-    opacity:1;
-    transform:translateY(0);
-}
-
-h2{
-    font-family:'Great Vibes', cursive;
-    font-size:3rem;
-    margin-bottom:30px;
-    color:#8b0000;
-}
-
-/* EVENTS */
-.events{
-    display:flex;
-    justify-content:space-around;
-    flex-wrap:wrap;
-}
-
-.event-card{
-    background:#fff;
-    padding:20px;
-    margin:15px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-    flex:1 1 250px;
-    transition:0.3s;
-}
-
-.event-card:hover{
-    transform:scale(1.05);
-}
-
-/* GALLERY */
-.gallery{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
-    gap:15px;
-}
-
-.gallery img{
-    width:100%;
-    border-radius:15px;
-    transition:0.4s;
-}
-
-.gallery img:hover{
-    transform:scale(1.1);
-}
-
-/* RSVP */
-.rsvp form{
-    max-width:500px;
-    margin:auto;
-    display:flex;
-    flex-direction:column;
-}
-
-.rsvp input, .rsvp textarea{
-    padding:10px;
-    margin:10px 0;
-    border-radius:10px;
-    border:1px solid #ccc;
-}
-
-.rsvp button{
-    padding:10px;
-    background:#8b0000;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-.rsvp button:hover{
-    background:#a52a2a;
-}
-
-/* FOOTER */
-footer{
-    background:#8b0000;
-    color:white;
-    padding:20px;
-    text-align:center;
-}
-
-/* ANIMATIONS */
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
-@keyframes slideDown{
-    from{transform:translateY(-50px); opacity:0;}
-    to{transform:translateY(0); opacity:1;}
-}
-
-/* RESPONSIVE */
-@media(max-width:768px){
+    /* =========================
+       Hero
+    ========================= */
+    .hero{
+      grid-column:1/-1;
+      position:relative;
+      min-height:60vh;
+      display:flex;
+      align-items:center;
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      background:linear-gradient(180deg, rgba(224,122,95,0.06), rgba(122,138,74,0.03));
+    }
+    .hero .bg{
+      position:absolute;
+      inset:0;
+      background-image: url("https://picsum.photos/id/1018/1600/900");
+      background-size:cover;
+      background-position:center;
+      transform:translateZ(0);
+      will-change:transform;
+      filter:contrast(1.02) saturate(1.05) brightness(0.95);
+      z-index:0;
+    }
+    .hero .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(251,248,245,0.6), rgba(251,248,245,0.85));
+      z-index:1;
+    }
+    .hero .content{
+      position:relative;
+      z-index:2;
+      padding:48px;
+      display:flex;
+      gap:24px;
+      align-items:center;
+      width:100%;
+    }
+    .hero .text{
+      max-width:720px;
+    }
     .hero h1{
-        font-size:2.5rem;
+      margin:0 0 8px 0;
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2rem, 4.5vw, 3.4rem);
+      letter-spacing:0.02em;
+      color:var(--text);
     }
+    .hero .lead{
+      margin:0 0 16px 0;
+      color:var(--muted-text);
+      font-size:1.05rem;
+    }
+    .hero .cta{
+      display:flex;
+      gap:12px;
+      margin-top:8px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:10px;
+      border:0;
+      cursor:pointer;
+      font-weight:600;
+      transition:transform var(--transition), box-shadow var(--transition);
+      background:var(--accent);
+      color:white;
+      box-shadow: 0 6px 18px rgba(224,122,95,0.18);
+      text-decoration:none;
+    }
+    .btn.secondary{
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(224,122,95,0.12);
+      box-shadow:none;
+    }
+    .btn:active{ transform:translateY(1px) }
+    .btn:focus{ outline:var(--focus); }
+
+    /* =========================
+       Main content & Sidebar cards
+    ========================= */
+    main{
+      background:transparent;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+    .sidebar{
+      position:sticky;
+      top:24px;
+      align-self:start;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
     h2{
-        font-size:2rem;
+      font-family:"Playfair Display", serif;
+      margin:0 0 12px 0;
+      font-size:1.4rem;
+      color:var(--text);
     }
-}
+    p{ margin:0 0 12px 0; color:var(--muted-text) }
 
-</style>
+    /* Schedule list */
+    .schedule{
+      display:grid;
+      gap:12px;
+    }
+    .schedule .item{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .time{
+      min-width:90px;
+      font-weight:700;
+      color:var(--accent);
+    }
+
+    /* Venue map container */
+    .map{
+      height:260px;
+      border-radius:10px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(122,138,74,0.06), rgba(224,122,95,0.04));
+      display:block;
+      margin-bottom:12px;
+    }
+    .map iframe{ width:100%; height:100%; border:0; display:block; }
+
+    /* =========================
+       Gallery
+    ========================= */
+    .gallery-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .gallery-grid a{ display:block; overflow:hidden; border-radius:8px; }
+    .gallery-grid img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+      border-radius:8px;
+      display:block;
+      transition:transform var(--transition), box-shadow var(--transition);
+      cursor:pointer;
+      background:linear-gradient(180deg, #f6f3f1, #efeae7);
+    }
+    .gallery-grid img:focus, .gallery-grid img:hover{
+      transform:scale(1.03);
+      box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      outline:none;
+    }
+
+    /* =========================
+       Lightbox modal
+    ========================= */
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(11,11,11,0.6);
+      z-index:10002;
+      padding:24px;
+    }
+    .lightbox[aria-hidden="false"]{ display:flex; }
+    .lightbox .panel{
+      max-width:1100px;
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
+      background:transparent;
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .lightbox img{
+      width:100%;
+      height:auto;
+      max-height:80vh;
+      border-radius:8px;
+      display:block;
+    }
+    .lightbox .controls{
+      position:absolute;
+      top:18px;
+      right:18px;
+      display:flex;
+      gap:8px;
+    }
+    .icon-btn{
+      background:rgba(255,255,255,0.9);
+      border-radius:8px;
+      padding:8px;
+      border:0;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+    }
+
+    /* =========================
+       RSVP Modal
+    ========================= */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(11,11,11,0.45);
+      z-index:10003;
+      padding:20px;
+    }
+    .modal[aria-hidden="false"]{ display:flex; }
+    .modal .dialog{
+      width:100%;
+      max-width:640px;
+      background:var(--card);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    /* Form layout */
+    .form-row{
+      display:flex;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .form-row .field{
+      flex:1 1 180px;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    label{ font-size:0.9rem; color:var(--muted-text) }
+    input[type="text"], input[type="email"], input[type="number"], select, textarea{
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(0,0,0,0.06);
+      font-size:1rem;
+      outline:none;
+      width:100%;
+      box-sizing:border-box;
+      background:linear-gradient(180deg,#fff,#fbfbfb);
+    }
+    input[type="number"]{ -moz-appearance:textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input:focus, select:focus, textarea:focus{ outline:var(--focus); }
+
+    .small{ font-size:0.9rem; color:var(--muted-text) }
+
+    /* =========================
+       Footer
+    ========================= */
+    footer{
+      grid-column:1/-1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding-top:12px;
+      color:var(--muted-text);
+      font-size:0.95rem;
+    }
+
+    /* =========================
+       Responsive breakpoints
+       1100px, 980px, 520px
+    ========================= */
+    @media (max-width:1100px){
+      .container{ grid-template-columns: 1fr 320px; padding:20px; gap:20px; }
+      .gallery-grid img{ height:160px; }
+    }
+    @media (max-width:980px){
+      .container{ grid-template-columns: 1fr; padding:18px; }
+      .sidebar{ position:static; }
+      .hero .content{ padding:28px; }
+      .gallery-grid{ grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:520px){
+      body{ font-size:15px; }
+      .hero{ min-height:48vh; }
+      .hero .content{ padding:18px; flex-direction:column; align-items:flex-start; }
+      .gallery-grid{ grid-template-columns:1fr; }
+      nav.main-nav{ display:none; }
+      .form-row .field{ flex-basis:100%; }
+    }
+
+    /* =========================
+       Print styles (simple)
+    ========================= */
+    @media print{
+      body{ background:white; color:black; }
+      .hero, nav, .btn, .lightbox, .modal, footer, .sidebar{ display:none !important; }
+      .container{ padding:0; grid-template-columns:1fr; }
+      .card{ box-shadow:none; border-radius:0; }
+      .print-invite{ display:block; padding:24px; }
+    }
+
+    /* Accessibility helpers */
+    .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+    /* reveal animation initial state */
+    .reveal{ opacity:0; transform:translateY(18px); transition:opacity 600ms ease, transform 600ms ease; will-change:opacity,transform; }
+    .reveal.visible{ opacity:1; transform:none; }
+
+  </style>
 </head>
-
 <body>
+  <div class="container" id="page">
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <a href="#hero" class="logo" aria-label="Malvi and Subrat homepage">
+        <div class="mark" aria-hidden="true">G&amp;M</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-weight:700;">Malvi &amp; Subrat</div>
+          <div style="font-size:0.85rem;color:var(--muted-text)">12 June 2026 — Angul, Odisha, India</div>
+        </div>
+      </a>
 
-<nav>
-<a href="#home">Home</a>
-<a href="#events">Events</a>
-<a href="#gallery">Gallery</a>
-<a href="#rsvp">RSVP</a>
-</nav>
+      <nav class="main-nav" role="navigation" aria-label="Main navigation">
+        <a href="#our-story">Our Story</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#venue">Venue</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#rsvp" id="rsvp-open">RSVP</a>
+      </nav>
+    </header>
 
-<!-- HERO -->
-<div class="hero" id="home">
-    <div>
-        <h1>Subrat ❤️ Malvi</h1>
-        <p>Are Getting Married</p>
-        <p>12 December 2026 | Jaipur, India</p>
+    <!-- Hero -->
+    <section id="hero" class="hero" role="region" aria-label="Hero">
+      <div class="bg" id="hero-bg" aria-hidden="true"></div>
+      <div class="overlay" aria-hidden="true"></div>
+      <div class="content">
+        <div class="text">
+          <h1 id="headline" class="reveal">Malvi &amp; Subrat</h1>
+          <p class="lead reveal" id="subhead">Join us for a warm celebration in Angul, Odisha, India — 12 June 2026</p>
+          <div class="cta reveal">
+            <a class="btn" href="#venue" id="cta-details">Details</a>
+            <button class="btn secondary" id="cta-rsvp">RSVP</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main content (left column) -->
+    <main>
+      <!-- Our Story -->
+      <section id="our-story" class="card reveal" aria-labelledby="story-title">
+        <h2 id="story-title">Our Story</h2>
+        <p>
+          Malvi and Subrat met on a sunlit terrace overlooking the sea. Their love grew with long walks, shared meals, and a love of music. They invite you to celebrate their wedding in Angul, Odisha, India.
+        </p>
+        <p>
+          Ceremony and reception will be intimate and photo-forward — expect warm terracotta tones, olive branches, and coastal-inspired details.
+        </p>
+      </section>
+
+      <!-- Schedule -->
+      <section id="schedule" class="card reveal" aria-labelledby="schedule-title">
+        <h2 id="schedule-title">Schedule</h2>
+        <div class="schedule">
+          <div class="item">
+            <div class="time">15:00</div>
+            <div>
+              <div style="font-weight:700">Ceremony</div>
+              <div class="small">Local ceremony venue, Angul</div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="time">16:30</div>
+            <div>
+              <div style="font-weight:700">Aperitivo</div>
+              <div class="small">Outdoor terrace / reception area</div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="time">18:00</div>
+            <div>
+              <div style="font-weight:700">Reception</div>
+              <div class="small">Dinner &amp; dancing — Angul celebration</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Venue -->
+      <section id="venue" class="card reveal" aria-labelledby="venue-title">
+        <h2 id="venue-title">Venue</h2>
+        <p><strong>Angul, Odisha, India</strong></p>
+        <p class="small">Address: Angul, Odisha, India (central Angul area). Please use this map for directions and local landmarks.</p>
+
+        <!-- Embedded map centered on Angul, Odisha, India -->
+        <div class="map" role="region" aria-label="Map showing Angul, Odisha, India">
+          <!-- Google Maps embed centered on Angul, Odisha, India -->
+          <iframe
+            title="Map: Angul, Odisha, India"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.1234567890123!2d85.1000000!3d20.8500000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a190b0000000001%3A0x0000000000000000!2sAngul%2C%20Odisha%2C%20India!5e0!3m2!1sen!2sin!4v1700000000000"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            aria-hidden="false"
+            ></iframe>
+        </div>
+
+        <p class="small">Nearest major transit: Angul Railway Station. Shuttle details will be shared with RSVP guests.</p>
+      </section>
+
+      <!-- Gallery -->
+      <section id="gallery" class="card reveal" aria-labelledby="gallery-title">
+        <h2 id="gallery-title">Gallery</h2>
+        <p class="small">A few moments to set the mood — click to enlarge.</p>
+
+        <!-- Gallery grid: images are lazy-loaded and include data-full for high-res lightbox -->
+        <div class="gallery-grid" id="gallery-grid">
+          <a href="#" data-full="https://picsum.photos/id/1018/1600/1200" aria-label="Open image 1 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1018/800/600" alt="Coastal view with wedding setup" data-full="https://picsum.photos/id/1018/1600/1200" width="800" height="600">
+          </a>
+          <a href="#" data-full="https://picsum.photos/id/1025/1600/1200" aria-label="Open image 2 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1025/800/600" alt="Bride and groom portrait" data-full="https://picsum.photos/id/1025/1600/1200" width="800" height="600">
+          </a>
+          <a href="#" data-full="https://picsum.photos/id/1036/1600/1200" aria-label="Open image 3 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1036/800/600" alt="Outdoor ceremony with sea view" data-full="https://picsum.photos/id/1036/1600/1200" width="800" height="600">
+          </a>
+          <a href="#" data-full="https://picsum.photos/id/1043/1600/1200" aria-label="Open image 4 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1043/800/600" alt="Reception tables with candles and olive branches" data-full="https://picsum.photos/id/1043/1600/1200" width="800" height="600">
+          </a>
+          <a href="#" data-full="https://picsum.photos/id/1050/1600/1200" aria-label="Open image 5 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1050/800/600" alt="Couple embracing by the sea" data-full="https://picsum.photos/id/1050/1600/1200" width="800" height="600">
+          </a>
+          <a href="#" data-full="https://picsum.photos/id/1069/1600/1200" aria-label="Open image 6 in lightbox">
+            <img loading="lazy" src="https://picsum.photos/id/1069/800/600" alt="Decorative wedding detail" data-full="https://picsum.photos/id/1069/1600/1200" width="800" height="600">
+          </a>
+        </div>
+      </section>
+
+      <!-- Printable invitation (optional extra) -->
+      <section class="card reveal print-invite" aria-labelledby="print-title" style="display:none;">
+        <h2 id="print-title">Printable Invitation</h2>
+        <div style="padding:18px; border:1px dashed rgba(0,0,0,0.06); border-radius:8px;">
+          <div style="font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:8px;">Malvi &amp; Subrat</div>
+          <div style="color:var(--muted-text); margin-bottom:12px;">12 June 2026 — Angul, Odisha, India</div>
+          <div style="font-size:0.95rem; color:var(--muted-text);">Please join us for ceremony at 15:00 followed by reception. RSVP required.</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sidebar (right column) -->
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="card reveal" role="complementary">
+        <h2>Details</h2>
+        <p class="small"><strong>Date:</strong> 12 June 2026</p>
+        <p class="small"><strong>Location:</strong> Angul, Odisha, India</p>
+        <p class="small"><strong>Dress code:</strong> Smart casual — light fabrics recommended</p>
+        <div style="margin-top:12px; display:flex; gap:8px;">
+          <a class="btn" href="#rsvp" id="rsvp-open-2">RSVP</a>
+          <button class="btn secondary" id="print-invite">Print</button>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <h2>Accommodations</h2>
+        <p class="small">We recommend hotels near Angul town center and transit hubs. Shuttle service will be arranged for guests — details after RSVP.</p>
+      </div>
+
+      <div class="card reveal">
+        <h2>Contact</h2>
+        <p class="small">For questions: <a href="mailto:hello@example.com">hello@example.com</a></p>
+      </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer>
+      <div>&copy; <span id="year"></span> Malvi &amp; Subrat</div>
+      <div class="small">Made with love — Angul, Odisha</div>
+    </footer>
+  </div>
+
+  <!-- Lightbox modal (keyboard accessible) -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Image viewer">
+    <div class="controls" aria-hidden="false">
+      <button class="icon-btn" id="prev" title="Previous image" aria-label="Previous image">&larr;</button>
+      <button class="icon-btn" id="next" title="Next image" aria-label="Next image">&rarr;</button>
+      <button class="icon-btn" id="close-lightbox" title="Close" aria-label="Close viewer">✕</button>
     </div>
-</div>
+    <div class="panel" role="document">
+      <img id="lightbox-img" src="" alt="">
+    </div>
+  </div>
 
-<!-- EVENTS -->
-<section id="events">
-<h2>Wedding Events</h2>
-<div class="events">
-<div class="event-card">
-<h3>Mehendi</h3>
-<p>10 December 2026</p>
-<p>Traditional henna ceremony with music & dance</p>
-</div>
-<div class="event-card">
-<h3>Sangeet</h3>
-<p>11 December 2026</p>
-<p>A night full of dance & celebration</p>
-</div>
-<div class="event-card">
-<h3>Wedding</h3>
-<p>12 December 2026</p>
-<p>The royal wedding ceremony</p>
-</div>
-</div>
-</section>
+  <!-- RSVP Modal -->
+  <div id="rsvp-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rsvp-title">
+    <div class="dialog" role="document">
+      <h2 id="rsvp-title">RSVP</h2>
+      <form id="rsvp-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" required placeholder="Your full name" />
+            <div class="small" id="err-name" aria-live="polite"></div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+            <div class="small" id="err-email" aria-live="polite"></div>
+          </div>
+        </div>
 
-<!-- GALLERY -->
-<section id="gallery">
-<h2>Wedding Gallery</h2>
-<div class="gallery">
-<img src="https://images.unsplash.com/photo-1598275277521-1885382d523a" alt="">
-<img src="https://images.unsplash.com/photo-1621690031911-c8c3fa4c7c16" alt="">
-<img src="https://images.unsplash.com/photo-1602576666092-bf6447a729fc" alt="">
-<img src="https://images.unsplash.com/photo-1621690031911-c8c3fa4c7c16" alt="">
-</div>
-</section>
+        <div class="form-row">
+          <div class="field">
+            <label for="attending">Attending</label>
+            <select id="attending" name="attending" required>
+              <option value="">Select</option>
+              <option value="yes">Yes, I will attend</option>
+              <option value="no">Regretfully cannot attend</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="guests">Number of guests</label>
+            <input id="guests" name="guests" type="number" min="0" max="10" value="0" />
+          </div>
+        </div>
 
-<!-- RSVP -->
-<section id="rsvp" class="rsvp">
-<h2>RSVP</h2>
-<form>
-<input type="text" placeholder="Your Name" required>
-<input type="email" placeholder="Your Email" required>
-<textarea rows="4" placeholder="Your Message"></textarea>
-<button type="submit">Send Wishes</button>
-</form>
-</section>
+        <div style="margin-bottom:12px;">
+          <label for="notes">Dietary notes or message</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Allergies, song requests, etc."></textarea>
+        </div>
 
-<footer>
-Made with ❤️ for our Royal Wedding
-</footer>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" class="btn secondary" id="rsvp-cancel">Cancel</button>
+          <button type="submit" class="btn" id="rsvp-submit">Send RSVP</button>
+        </div>
 
-<script>
-// Scroll Animation
-const sections = document.querySelectorAll("section");
-window.addEventListener("scroll", () => {
-    const trigger = window.innerHeight * 0.8;
-    sections.forEach(section => {
-        const top = section.getBoundingClientRect().top;
-        if(top < trigger){
-            section.classList.add("show");
+        <div style="margin-top:12px; display:flex; gap:8px; justify-content:space-between; align-items:center;">
+          <div class="small">Saved responses: <span id="saved-count">0</span></div>
+          <div>
+            <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
+            <button type="button" class="btn secondary" id="clear-responses">Clear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* =========================
+       Inline JS - deferred behavior
+       - i18n: Italian if browser language starts with 'it'
+       - IntersectionObserver reveal animations
+       - Hero parallax & typewriter/fade-in headline
+       - Gallery lightbox with keyboard-accessible controls
+       - RSVP modal with client-side validation, focus management, and localStorage
+       - Export RSVP as CSV and clear responses
+       - Smooth scroll for nav links
+       - Map is embedded via iframe (no JS required)
+    ========================= */
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Internationalization (Italian if viewer language indicates 'it')
+      const userLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+      const languages = navigator.languages || [userLang];
+      const isItalian = languages.some(l => l && l.startsWith('it'));
+
+      const strings = {
+        en: {
+          ourStory: 'Our Story',
+          schedule: 'Schedule',
+          venue: 'Venue',
+          gallery: 'Gallery',
+          rsvp: 'RSVP',
+          rsvpTitle: 'RSVP',
+          exportCSV: 'Export CSV',
+          clear: 'Clear',
+          nameRequired: 'Please enter your name.',
+          emailRequired: 'Please enter a valid email.',
+          attendingRequired: 'Please select attending or not.',
+          savedAlert: 'Thank you — your RSVP has been saved.',
+          noExport: 'No responses to export.',
+          clearConfirm: 'Clear all saved RSVP responses?'
+        },
+        it: {
+          ourStory: 'La nostra storia',
+          schedule: 'Programma',
+          venue: 'Luogo',
+          gallery: 'Galleria',
+          rsvp: 'RSVP',
+          rsvpTitle: 'RSVP',
+          exportCSV: 'Esporta CSV',
+          clear: 'Cancella',
+          nameRequired: 'Inserisci il nome.',
+          emailRequired: 'Inserisci una email valida.',
+          attendingRequired: 'Seleziona la partecipazione.',
+          savedAlert: 'Grazie — la tua risposta è stata salvata.',
+          noExport: 'Nessuna risposta da esportare.',
+          clearConfirm: 'Cancellare tutte le risposte RSVP salvate?'
         }
-    });
-});
-</script>
+      };
 
+      const lang = isItalian ? 'it' : 'en';
+      // Replace a few UI strings
+      const navLinks = document.querySelectorAll('nav.main-nav a');
+      if (navLinks.length >= 4) {
+        navLinks[0].textContent = strings[lang].ourStory;
+        navLinks[1].textContent = strings[lang].schedule;
+        navLinks[2].textContent = strings[lang].venue;
+        navLinks[3].textContent = strings[lang].gallery;
+      }
+      const rsvpOpen = document.getElementById('rsvp-open');
+      if (rsvpOpen) rsvpOpen.textContent = strings[lang].rsvp;
+      const rsvpOpen2 = document.getElementById('rsvp-open-2');
+      if (rsvpOpen2) rsvpOpen2.textContent = strings[lang].rsvp;
+      const rsvpTitle = document.getElementById('rsvp-title');
+      if (rsvpTitle) rsvpTitle.textContent = strings[lang].rsvpTitle;
+      const exportBtn = document.getElementById('export-csv');
+      if (exportBtn) exportBtn.textContent = strings[lang].exportCSV;
+      const clearBtn = document.getElementById('clear-responses');
+      if (clearBtn) clearBtn.textContent = strings[lang].clear;
+
+      // Year in footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Smooth scroll for nav links
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function (e) {
+          const href = this.getAttribute('href');
+          if (!href || href === '#') return;
+          const targetId = href.slice(1);
+          const target = document.getElementById(targetId);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+              try { target.focus({ preventScroll: true }); } catch (err) {}
+            }, 600);
+          }
+        });
+      });
+
+      // IntersectionObserver reveal animations
+      const reveals = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(el => io.observe(el));
+
+      // Hero parallax
+      const heroBg = document.getElementById('hero-bg');
+      window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        heroBg.style.transform = `translateY(${scrolled * 0.12}px) scale(1.02)`;
+      }, { passive: true });
+
+      // Typewriter / fade-in headline
+      const headline = document.getElementById('headline');
+      const subhead = document.getElementById('subhead');
+      headline.style.opacity = 0;
+      subhead.style.opacity = 0;
+      setTimeout(() => {
+        headline.style.transition = 'opacity 700ms ease';
+        headline.style.opacity = 1;
+        const text = subhead.textContent;
+        subhead.textContent = '';
+        subhead.style.opacity = 1;
+        let i = 0;
+        const t = setInterval(() => {
+          subhead.textContent += text.charAt(i);
+          i++;
+          if (i >= text.length) clearInterval(t);
+        }, 28);
+      }, 300);
+
+      // Gallery image fallback handler
+      const galleryImgs = document.querySelectorAll('.gallery-grid img');
+      galleryImgs.forEach(img => {
+        img.addEventListener('error', function () {
+          const full = img.dataset.full;
+          if (full && img.src !== full) {
+            img.src = full;
+            return;
+          }
+          // final fallback: neutral image
+          img.src = 'https://picsum.photos/800/600?random=1';
+        });
+        // Add keyboard focusability for accessibility
+        img.setAttribute('tabindex', '0');
+      });
+
+      // Gallery lightbox
+      const gallery = document.getElementById('gallery-grid');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const closeLightboxBtn = document.getElementById('close-lightbox');
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+
+      const galleryLinks = Array.from(gallery.querySelectorAll('a'));
+      let currentIndex = -1;
+
+      function openLightbox(index) {
+        const link = galleryLinks[index];
+        const img = link.querySelector('img');
+        const full = img.dataset.full || img.src;
+        lightboxImg.src = full;
+        lightboxImg.alt = img.alt || '';
+        lightbox.setAttribute('aria-hidden', 'false');
+        lightbox.style.display = 'flex';
+        currentIndex = index;
+        closeLightboxBtn.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.style.display = 'none';
+        lightboxImg.src = '';
+        currentIndex = -1;
+      }
+
+      function showNext(delta = 1) {
+        if (currentIndex < 0) return;
+        let next = (currentIndex + delta + galleryLinks.length) % galleryLinks.length;
+        openLightbox(next);
+      }
+
+      galleryLinks.forEach((link, idx) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          openLightbox(idx);
+        });
+        const img = link.querySelector('img');
+        img.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLightbox(idx);
+          }
+        });
+      });
+
+      closeLightboxBtn.addEventListener('click', closeLightbox);
+      prevBtn.addEventListener('click', () => showNext(-1));
+      nextBtn.addEventListener('click', () => showNext(1));
+
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (lightbox.getAttribute('aria-hidden') === 'false') {
+          if (e.key === 'Escape') closeLightbox();
+          if (e.key === 'ArrowRight') showNext(1);
+          if (e.key === 'ArrowLeft') showNext(-1);
+        }
+      });
+
+      // RSVP modal behavior
+      const rsvpModal = document.getElementById('rsvp-modal');
+      const rsvpOpenBtns = [document.getElementById('rsvp-open'), document.getElementById('rsvp-open-2'), document.getElementById('cta-rsvp')].filter(Boolean);
+      const rsvpCancel = document.getElementById('rsvp-cancel');
+      const rsvpForm = document.getElementById('rsvp-form');
+      const savedCount = document.getElementById('saved-count');
+      const exportCsvBtn = document.getElementById('export-csv');
+      const clearResponsesBtn = document.getElementById('clear-responses');
+
+      function openRSVP() {
+        rsvpModal.setAttribute('aria-hidden', 'false');
+        rsvpModal.style.display = 'flex';
+        document.getElementById('name').focus();
+        document.body.style.overflow = 'hidden';
+      }
+      function closeRSVP() {
+        rsvpModal.setAttribute('aria-hidden', 'true');
+        rsvpModal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+
+      rsvpOpenBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openRSVP();
+        });
+      });
+      rsvpCancel.addEventListener('click', closeRSVP);
+      rsvpModal.addEventListener('click', (e) => {
+        if (e.target === rsvpModal) closeRSVP();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (rsvpModal.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') closeRSVP();
+      });
+
+      // Client-side validation and localStorage saving
+      const ERR_NAME = document.getElementById('err-name');
+      const ERR_EMAIL = document.getElementById('err-email');
+
+      function loadResponses() {
+        const raw = localStorage.getItem('rsvp_responses');
+        try {
+          return raw ? JSON.parse(raw) : [];
+        } catch (err) {
+          return [];
+        }
+      }
+      function saveResponses(arr) {
+        localStorage.setItem('rsvp_responses', JSON.stringify(arr));
+        savedCount.textContent = arr.length;
+      }
+      saveResponses(loadResponses());
+
+      rsvpForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const attending = document.getElementById('attending').value;
+        const guests = document.getElementById('guests').value;
+        const notes = document.getElementById('notes').value.trim();
+
+        let valid = true;
+        ERR_NAME.textContent = '';
+        ERR_EMAIL.textContent = '';
+
+        if (!name) { ERR_NAME.textContent = strings[lang].nameRequired; valid = false; }
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) { ERR_EMAIL.textContent = strings[lang].emailRequired; valid = false; }
+        if (!attending) { alert(strings[lang].attendingRequired); valid = false; }
+
+        if (!valid) return;
+
+        const responses = loadResponses();
+        responses.push({
+          name, email, attending, guests: Number(guests || 0), notes, timestamp: new Date().toISOString()
+        });
+        saveResponses(responses);
+
+        // Feedback
+        alert(strings[lang].savedAlert);
+        rsvpForm.reset();
+        closeRSVP();
+      });
+
+      // Export CSV
+      function toCSV(rows) {
+        const header = ['name','email','attending','guests','notes','timestamp'];
+        const lines = [header.join(',')];
+        rows.forEach(r => {
+          const line = header.map(h => {
+            const v = (r[h] === undefined || r[h] === null) ? '' : String(r[h]).replace(/"/g, '""');
+            return `"${v}"`;
+          }).join(',');
+          lines.push(line);
+        });
+        return lines.join('\n');
+      }
+
+      exportCsvBtn.addEventListener('click', () => {
+        const rows = loadResponses();
+        if (!rows.length) { alert(strings[lang].noExport); return; }
+        const csv = toCSV(rows);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'rsvp_responses.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      clearResponsesBtn.addEventListener('click', () => {
+        if (confirm(strings[lang].clearConfirm)) {
+          localStorage.removeItem('rsvp_responses');
+          saveResponses([]);
+        }
+      });
+
+      // Print invite button
+      document.getElementById('print-invite').addEventListener('click', () => {
+        const el = document.querySelector('.print-invite');
+        el.style.display = 'block';
+        setTimeout(() => window.print(), 200);
+      });
+
+      // Accessibility: gallery images already have tabindex; avoid forcing tabindex globally.
+    });
+  </script>
 </body>
 </html>
