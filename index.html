@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Indian Wedding</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background:#fff8f0;
+    color:#5a2a27;
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    width:100%;
+    top:0;
+    background:rgba(128,0,0,0.95);
+    padding:15px 0;
+    text-align:center;
+    z-index:1000;
+}
+
+nav a{
+    color:#ffd700;
+    margin:0 20px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+
+nav a:hover{
+    color:#fff;
+}
+
+/* HERO SECTION */
+.hero{
+    height:100vh;
+    background:url('https://images.unsplash.com/photo-1602576666092-bf6447a729fc') center/cover no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+    animation:fadeIn 2s ease-in-out;
+}
+
+.hero h1{
+    font-family:'Great Vibes', cursive;
+    font-size:4rem;
+    animation:slideDown 2s ease;
+}
+
+.hero p{
+    font-size:1.5rem;
+    margin-top:20px;
+}
+
+/* SECTION COMMON */
+section{
+    padding:80px 10%;
+    text-align:center;
+    opacity:0;
+    transform:translateY(50px);
+    transition:all 1s ease;
+}
+
+section.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+h2{
+    font-family:'Great Vibes', cursive;
+    font-size:3rem;
+    margin-bottom:30px;
+    color:#8b0000;
+}
+
+/* EVENTS */
+.events{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+}
+
+.event-card{
+    background:#fff;
+    padding:20px;
+    margin:15px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    flex:1 1 250px;
+    transition:0.3s;
+}
+
+.event-card:hover{
+    transform:scale(1.05);
+}
+
+/* GALLERY */
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+    gap:15px;
+}
+
+.gallery img{
+    width:100%;
+    border-radius:15px;
+    transition:0.4s;
+}
+
+.gallery img:hover{
+    transform:scale(1.1);
+}
+
+/* RSVP */
+.rsvp form{
+    max-width:500px;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+}
+
+.rsvp input, .rsvp textarea{
+    padding:10px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+.rsvp button{
+    padding:10px;
+    background:#8b0000;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.rsvp button:hover{
+    background:#a52a2a;
+}
+
+/* FOOTER */
+footer{
+    background:#8b0000;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+@keyframes slideDown{
+    from{transform:translateY(-50px); opacity:0;}
+    to{transform:translateY(0); opacity:1;}
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .hero h1{
+        font-size:2.5rem;
+    }
+    h2{
+        font-size:2rem;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+<a href="#home">Home</a>
+<a href="#events">Events</a>
+<a href="#gallery">Gallery</a>
+<a href="#rsvp">RSVP</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="home">
+    <div>
+        <h1>Subrat ❤️ Malvi</h1>
+        <p>Are Getting Married</p>
+        <p>12 December 2026 | Jaipur, India</p>
+    </div>
+</div>
+
+<!-- EVENTS -->
+<section id="events">
+<h2>Wedding Events</h2>
+<div class="events">
+<div class="event-card">
+<h3>Mehendi</h3>
+<p>10 December 2026</p>
+<p>Traditional henna ceremony with music & dance</p>
+</div>
+<div class="event-card">
+<h3>Sangeet</h3>
+<p>11 December 2026</p>
+<p>A night full of dance & celebration</p>
+</div>
+<div class="event-card">
+<h3>Wedding</h3>
+<p>12 December 2026</p>
+<p>The royal wedding ceremony</p>
+</div>
+</div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+<h2>Wedding Gallery</h2>
+<div class="gallery">
+<img src="https://images.unsplash.com/photo-1598275277521-1885382d523a" alt="">
+<img src="https://images.unsplash.com/photo-1621690031911-c8c3fa4c7c16" alt="">
+<img src="https://images.unsplash.com/photo-1602576666092-bf6447a729fc" alt="">
+<img src="https://images.unsplash.com/photo-1621690031911-c8c3fa4c7c16" alt="">
+</div>
+</section>
+
+<!-- RSVP -->
+<section id="rsvp" class="rsvp">
+<h2>RSVP</h2>
+<form>
+<input type="text" placeholder="Your Name" required>
+<input type="email" placeholder="Your Email" required>
+<textarea rows="4" placeholder="Your Message"></textarea>
+<button type="submit">Send Wishes</button>
+</form>
+</section>
+
+<footer>
+Made with ❤️ for our Royal Wedding
+</footer>
+
+<script>
+// Scroll Animation
+const sections = document.querySelectorAll("section");
+window.addEventListener("scroll", () => {
+    const trigger = window.innerHeight * 0.8;
+    sections.forEach(section => {
+        const top = section.getBoundingClientRect().top;
+        if(top < trigger){
+            section.classList.add("show");
+        }
+    });
+});
+</script>
+
+</body>
+</html>
