@@ -12,7 +12,7 @@
         https://source.unsplash.com/1600x1200/?amalfi,wedding
       but note those query endpoints can occasionally return errors.
     - Change colors: edit CSS variables near the top of the <style> block (--accent, --muted, --bg, --card).
-    - Change names, date, venue, schedule: search for placeholders (Malvi & Subrat, 12 June 2026, Angul, Odisha, India).
+    - Change names, date, venue, schedule: search for placeholders (Malvi & Subrat, 22 July 2026, Angul, Odisha, India).
     - To enable server-side RSVP: replace the localStorage save in the RSVP submit handler with a fetch() POST to your endpoint.
     - This file uses Google Fonts (external). All other CSS/JS is embedded.
     - Map: embedded Google Maps iframe is centered on Angul, Odisha, India. If you prefer a different map provider, replace the iframe src.
@@ -38,7 +38,7 @@
        Edit these to change palette and basic layout.
     ========================= */
     :root{
-      --accent: #E07A5F; /* warm terracotta */
+      /* --accent: #E07A5F; warm terracotta */
       --muted: #7A8A4A;  /* olive tone */
       --bg: #FBF8F5;     /* warm off-white */
       --card: #FFFFFF;   /* card background */
@@ -49,6 +49,7 @@
       --transition: 300ms cubic-bezier(.2,.9,.3,1);
       --shadow: 0 6px 18px rgba(43,43,43,0.08);
       --focus: 3px solid rgba(224,122,95,0.18);
+      --accent: linear-gradient(135deg, #E7B980, #D4AF37, #C9972B);
     }
 
     /* =========================
@@ -56,7 +57,7 @@
     ========================= */
     *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%}
-    body{
+    /* body{
       margin:0;
       font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       color:var(--text);
@@ -66,6 +67,19 @@
       line-height:1.5;
       font-size:16px;
       scroll-behavior:smooth;
+    } */
+    body{
+      margin:0;
+      font-family:"Inter", system-ui;
+      color:#2B2B2B;
+
+      background:
+        radial-gradient(circle at 15% 20%, rgba(212,175,55,0.18), transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(224,122,95,0.15), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.04), transparent 70%),
+        linear-gradient(180deg, #FBF8F5, #ffffff);
+
+      overflow-x:hidden;
     }
 
     a { color: inherit; }
@@ -209,11 +223,15 @@
       color:white;
       box-shadow: 0 6px 18px rgba(224,122,95,0.18);
       text-decoration:none;
+      background:linear-gradient(135deg, #E7B980, #D4AF37);
+      color:#fff;
+      border:none;
+      box-shadow:0 8px 25px rgba(212,175,55,0.35);
     }
     .btn.secondary{
       background:transparent;
-      color:var(--accent);
-      border:1px solid rgba(224,122,95,0.12);
+      border:1px solid rgba(212,175,55,0.4);
+      color:#C9972B;
       box-shadow:none;
     }
     .btn:active{ transform:translateY(1px) }
@@ -225,12 +243,49 @@
     main{
       background:transparent;
     }
-    .card{
+    /* .card{
       background:var(--card);
       border-radius:12px;
       padding:20px;
       box-shadow:var(--shadow);
-    }
+    } */
+    .card{
+        background:rgba(255,255,255,0.6);
+        backdrop-filter:blur(18px);
+        -webkit-backdrop-filter:blur(18px);
+
+        border-radius:18px;
+        padding:24px;
+
+        border:1px solid rgba(212,175,55,0.25);
+
+        box-shadow:
+          0 20px 60px rgba(0,0,0,0.12),
+          inset 0 1px 0 rgba(255,255,255,0.7);
+
+        transition:all 0.4s ease;
+      }
+
+      .card:hover{
+        transform:translateY(-8px) scale(1.015);
+        box-shadow:0 30px 80px rgba(0,0,0,0.18);
+      }
+      .card::before{
+          content:"";
+          position:absolute;
+          inset:-2px;
+          border-radius:inherit;
+
+          background:linear-gradient(135deg, rgba(212,175,55,0.3), transparent);
+
+          opacity:0;
+          transition:0.4s;
+          z-index:-1;
+        }
+
+        .card:hover::before{
+          opacity:1;
+        }
     .sidebar{
       position:sticky;
       top:24px;
@@ -415,7 +470,54 @@
       color:var(--muted-text);
       font-size:0.95rem;
     }
+    .lux-decor{
+      position:fixed;
+      top:0;
+      bottom:0;
+      width:140px;
+      pointer-events:none;
+      z-index:0;
+      opacity:0.5;
+    }
 
+    .lux-decor.left{
+      left:0;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(224,122,95,0.25), transparent 60%),
+        radial-gradient(circle at 40% 70%, rgba(212,175,55,0.25), transparent 60%);
+    }
+
+    .lux-decor.right{
+      right:0;
+      background:
+        radial-gradient(circle at 70% 20%, rgba(224,122,95,0.25), transparent 60%),
+        radial-gradient(circle at 60% 80%, rgba(212,175,55,0.25), transparent 60%);
+    }
+    .hero .overlay{
+      background:
+        linear-gradient(180deg, rgba(251,248,245,0.55), rgba(251,248,245,0.9)),
+        radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
+    }
+    .section-divider{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin:32px 0;
+      }
+
+      .section-divider::before,
+      .section-divider::after{
+        content:"";
+        flex:1;
+        height:1px;
+        background:linear-gradient(to right, transparent, #D4AF37, transparent);
+      }
+
+      .section-divider span{
+        margin:0 14px;
+        font-size:20px;
+        color:#D4AF37;
+      }
     /* =========================
        Responsive breakpoints
        1100px, 980px, 520px
@@ -449,6 +551,88 @@
       .card{ box-shadow:none; border-radius:0; }
       .print-invite{ display:block; padding:24px; }
     }
+    @keyframes float{
+      0%{ transform:translateY(0px); }
+      50%{ transform:translateY(-6px); }
+      100%{ transform:translateY(0px); }
+    }
+
+    .hero h1{
+      animation:float 6s ease-in-out infinite;
+    }
+    h1, h2{
+      letter-spacing:0.04em;
+    }
+
+    h1{
+      text-shadow:0 2px 20px rgba(0,0,0,0.08);
+    }
+    .petals{
+        position:fixed;
+        inset:0;
+        pointer-events:none;
+        z-index:0;
+      }
+
+      .petal{
+        position:absolute;
+        width:10px;
+        height:10px;
+        background:linear-gradient(135deg,#E7B980,#D4AF37);
+        border-radius:50% 50% 50% 0;
+        opacity:0.6;
+        animation:fall linear infinite;
+      }
+
+      @keyframes fall{
+        0%{
+          transform:translateY(-10vh) translateX(0) rotate(0deg);
+          opacity:0;
+        }
+        10%{ opacity:0.6; }
+        100%{
+          transform:translateY(110vh) translateX(60px) rotate(360deg);
+          opacity:0;
+        }
+      }
+      .hero .bg{
+        filter:brightness(0.85) contrast(1.1) saturate(1.1);
+        transform:scale(1.05);
+      }
+
+      .hero::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:radial-gradient(circle at center, rgba(255,255,255,0.2), transparent 70%);
+      }
+      .gold-text{
+        background:linear-gradient(120deg,#E7B980,#FFF3B0,#D4AF37,#E7B980);
+        background-size:200% auto;
+
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+
+        animation:shine 5s linear infinite;
+      }
+
+      @keyframes shine{
+        to{ background-position:200% center; }
+      }
+      body{
+        animation:fadeIn 1.2s ease;
+      }
+
+      @keyframes fadeIn{
+        from{
+          opacity:0;
+          transform:translateY(10px);
+        }
+        to{
+          opacity:1;
+          transform:none;
+        }
+      }
 
     /* Accessibility helpers */
     .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
@@ -459,14 +643,18 @@
   </style>
 </head>
 <body>
+  <div class="lux-decor left"></div>
+<div class="lux-decor right"></div>
+<div class="petals"></div>
   <div class="container" id="page">
+    
     <!-- Header -->
     <header class="site-header" role="banner">
       <a href="#hero" class="logo" aria-label="Malvi and Subrat homepage">
         <div class="mark" aria-hidden="true">M&amp;S</div>
         <div>
-          <div style="font-family:'Playfair Display',serif;font-weight:700;">Malvi &amp; Subrat</div>
-          <div style="font-size:0.85rem;color:var(--muted-text)">12 June 2026 — Angul, Odisha, India</div>
+          <div style="font-family:'Playfair Display',serif;font-weight:700;" class="gold-text">Malvi &amp; Subrat</div>
+          <div style="font-size:0.85rem;color:var(--muted-text)">22 July 2026 — Angul, Odisha, India</div>
         </div>
       </a>
 
@@ -486,7 +674,7 @@
       <div class="content">
         <div class="text">
           <h1 id="headline" class="reveal">Malvi &amp; Subrat</h1>
-          <p class="lead reveal" id="subhead">Join us for a warm celebration in Angul, Odisha, India — 12 June 2026</p>
+          <p class="lead reveal" id="subhead">Join us for a warm celebration in Angul, Odisha, India — 22 July 2026</p>
           <div class="cta reveal">
             <a class="btn" href="#venue" id="cta-details">Details</a>
             <button class="btn secondary" id="cta-rsvp">RSVP</button>
@@ -507,7 +695,7 @@
           Ceremony and reception will be intimate and photo-forward — expect warm terracotta tones, olive branches, and coastal-inspired details.
         </p>
       </section>
-
+      <div class="section-divider"><span>✦</span></div>
       <!-- Schedule -->
       <section id="schedule" class="card reveal" aria-labelledby="schedule-title">
         <h2 id="schedule-title">Schedule</h2>
@@ -535,7 +723,7 @@
           </div>
         </div>
       </section>
-
+      <div class="section-divider"><span>✦</span></div>
       <!-- Venue -->
       <section id="venue" class="card reveal" aria-labelledby="venue-title">
         <h2 id="venue-title">Venue</h2>
@@ -556,7 +744,7 @@
 
         <p class="small">Nearest major transit: Angul Railway Station. Shuttle details will be shared with RSVP guests.</p>
       </section>
-
+<div class="section-divider"><span>✦</span></div>
       <!-- Gallery -->
       <section id="gallery" class="card reveal" aria-labelledby="gallery-title">
         <h2 id="gallery-title">Gallery</h2>
@@ -584,13 +772,13 @@
           </a>
         </div>
       </section>
-
+<div class="section-divider"><span>✦</span></div>
       <!-- Printable invitation (optional extra) -->
       <section class="card reveal print-invite" aria-labelledby="print-title" style="display:none;">
         <h2 id="print-title">Printable Invitation</h2>
         <div style="padding:18px; border:1px dashed rgba(0,0,0,0.06); border-radius:8px;">
           <div style="font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:8px;">Malvi &amp; Subrat</div>
-          <div style="color:var(--muted-text); margin-bottom:12px;">12 June 2026 — Angul, Odisha, India</div>
+          <div style="color:var(--muted-text); margin-bottom:12px;">22 July 2026 — Angul, Odisha, India</div>
           <div style="font-size:0.95rem; color:var(--muted-text);">Please join us for ceremony at 15:00 followed by reception. RSVP required.</div>
         </div>
       </section>
@@ -600,7 +788,7 @@
     <aside class="sidebar" aria-label="Sidebar">
       <div class="card reveal" role="complementary">
         <h2>Details</h2>
-        <p class="small"><strong>Date:</strong> 12 June 2026</p>
+        <p class="small"><strong>Date:</strong> 22 July 2026</p>
         <p class="small"><strong>Location:</strong> Angul, Odisha, India</p>
         <p class="small"><strong>Dress code:</strong> Smart casual — light fabrics recommended</p>
         <div style="margin-top:12px; display:flex; gap:8px;">
@@ -616,7 +804,7 @@
 
       <div class="card reveal">
         <h2>Contact</h2>
-        <p class="small">For questions: <a href="mailto:hello@example.com">hello@example.com</a></p>
+        <p class="small">For questions: <a href="mailto:sb54086@gmail.com">CONTACT US</a></p>
       </div>
     </aside>
 
@@ -1035,6 +1223,18 @@
 
       // Accessibility: gallery images already have tabindex; avoid forcing tabindex globally.
     });
+    const petalsContainer = document.querySelector('.petals');
+
+for(let i=0;i<25;i++){
+  const petal = document.createElement('div');
+  petal.classList.add('petal');
+
+  petal.style.left = Math.random()*100 + 'vw';
+  petal.style.animationDuration = (6 + Math.random()*6) + 's';
+  petal.style.animationDelay = Math.random()*5 + 's';
+
+  petalsContainer.appendChild(petal);
+}
   </script>
 </body>
 </html>
