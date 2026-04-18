@@ -578,7 +578,7 @@
         position:absolute;
         width:10px;
         height:10px;
-        background:linear-gradient(135deg,#E7B980,#D4AF37);
+        background:linear-gradient(135deg,#E7B980,#D4AF37,#29eb3c);
         border-radius:50% 50% 50% 0;
         opacity:0.6;
         animation:fall linear infinite;
@@ -607,7 +607,7 @@
         background:radial-gradient(circle at center, rgba(255,255,255,0.2), transparent 70%);
       }
       .gold-text{
-        background:linear-gradient(120deg,#E7B980,#FFF3B0,#D4AF37,#E7B980);
+        background:linear-gradient(120deg,#75f164,#06f40a,#D4AF37,#E7B980,#f6be05,#f6be05);
         background-size:200% auto;
 
         -webkit-background-clip:text;
@@ -659,7 +659,7 @@
       </a>
 
       <nav class="main-nav" role="navigation" aria-label="Main navigation">
-        <a href="#our-story">Our Story</a>
+        <!-- <a href="#our-story">Our Story</a> -->
         <a href="#schedule">Schedule</a>
         <a href="#venue">Venue</a>
         <a href="#gallery">Gallery</a>
@@ -686,7 +686,7 @@
     <!-- Main content (left column) -->
     <main>
       <!-- Our Story -->
-      <section id="our-story" class="card reveal" aria-labelledby="story-title">
+      <!-- <section id="our-story" class="card reveal" aria-labelledby="story-title">
         <h2 id="story-title">Our Story</h2>
         <p>
           Malvi and Subrat met on a sunlit terrace overlooking the sea. Their love grew with long walks, shared meals, and a love of music. They invite you to celebrate their wedding in Angul, Odisha, India.
@@ -695,7 +695,7 @@
           Ceremony and reception will be intimate and photo-forward — expect warm terracotta tones, olive branches, and coastal-inspired details.
         </p>
       </section>
-      <div class="section-divider"><span>✦</span></div>
+      <div class="section-divider"><span>✦</span></div> -->
       <!-- Schedule -->
       <section id="schedule" class="card reveal" aria-labelledby="schedule-title">
         <h2 id="schedule-title">Schedule</h2>
@@ -861,8 +861,8 @@
         </div>
 
         <div style="margin-bottom:12px;">
-          <label for="notes">Dietary notes or message</label>
-          <textarea id="notes" name="notes" rows="3" placeholder="Allergies, song requests, etc."></textarea>
+          <label for="messages">Dietary notes or message</label>
+          <textarea id="messages" name="messages" rows="3" placeholder="Allergies, song requests, etc."></textarea>
         </div>
 
         <div style="display:flex; gap:8px; justify-content:flex-end;">
@@ -870,13 +870,13 @@
           <button type="submit" class="btn" id="rsvp-submit">Send RSVP</button>
         </div>
 
-        <div style="margin-top:12px; display:flex; gap:8px; justify-content:space-between; align-items:center;">
+        <!-- <div style="margin-top:12px; display:flex; gap:8px; justify-content:space-between; align-items:center;">
           <div class="small">Saved responses: <span id="saved-count">0</span></div>
           <div>
             <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
             <button type="button" class="btn secondary" id="clear-responses">Clear</button>
           </div>
-        </div>
+        </div> -->
       </form>
     </div>
   </div>
@@ -894,6 +894,24 @@
        - Map is embedded via iframe (no JS required)
     ========================= */
 
+    function submitData(e){
+      console.log(e)
+    }
+    const form = document.querySelector('#rsvp-form');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevents page refresh
+      const scriptURL = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3aDlBcFB3UHBGSkdsNklrcG54QVhvM05ZcDg2QUZIMmo4bGtyaDJoNzN3Z2VwX1FYeDU1VVptS0tqeVI0OWhWdzYvZXhlYw';
+      
+      const formData = new FormData(form); // Extract data from form
+      const data = Object.fromEntries(formData); // Convert to plain object
+      
+      fetch(atob(scriptURL), { method: 'POST', body: formData})
+      .then(response => alert('Success! Thanks for responding.'))
+      .catch(error => console.error('Error!', error.message));
+    });
+
+
     document.addEventListener('DOMContentLoaded', function () {
       // Internationalization (Italian if viewer language indicates 'it')
       const userLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
@@ -902,7 +920,7 @@
 
       const strings = {
         en: {
-          ourStory: 'Our Story',
+          //ourStory: 'Our Story',
           schedule: 'Schedule',
           venue: 'Venue',
           gallery: 'Gallery',
@@ -918,7 +936,7 @@
           clearConfirm: 'Clear all saved RSVP responses?'
         },
         it: {
-          ourStory: 'La nostra storia',
+          //ourStory: 'La nostra storia',
           schedule: 'Programma',
           venue: 'Luogo',
           gallery: 'Galleria',
