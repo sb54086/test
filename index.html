@@ -831,7 +831,7 @@
   <div id="rsvp-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rsvp-title">
     <div class="dialog" role="document">
       <h2 id="rsvp-title">RSVP</h2>
-      <form id="rsvp-form" novalidate>
+      <form id="rsvp-form" >
         <div class="form-row">
           <div class="field">
             <label for="name">Full name</label>
@@ -894,22 +894,8 @@
        - Map is embedded via iframe (no JS required)
     ========================= */
 
-    function submitData(e){
-      console.log(e)
-    }
-    const form = document.querySelector('#rsvp-form');
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault(); // Prevents page refresh
-      const scriptURL = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3aDlBcFB3UHBGSkdsNklrcG54QVhvM05ZcDg2QUZIMmo4bGtyaDJoNzN3Z2VwX1FYeDU1VVptS0tqeVI0OWhWdzYvZXhlYw';
-      
-      const formData = new FormData(form); // Extract data from form
-      const data = Object.fromEntries(formData); // Convert to plain object
-      
-      fetch(atob(scriptURL), { method: 'POST', body: formData})
-      .then(response => alert('Success! Thanks for responding.'))
-      .catch(error => console.error('Error!', error.message));
-    });
+   
+    
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1119,8 +1105,8 @@
       const rsvpCancel = document.getElementById('rsvp-cancel');
       const rsvpForm = document.getElementById('rsvp-form');
       const savedCount = document.getElementById('saved-count');
-      const exportCsvBtn = document.getElementById('export-csv');
-      const clearResponsesBtn = document.getElementById('clear-responses');
+      
+    
 
       function openRSVP() {
         rsvpModal.setAttribute('aria-hidden', 'false');
@@ -1160,19 +1146,20 @@
           return [];
         }
       }
-      function saveResponses(arr) {
-        localStorage.setItem('rsvp_responses', JSON.stringify(arr));
-        savedCount.textContent = arr.length;
-      }
-      saveResponses(loadResponses());
+      
+      
 
-      rsvpForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('name').value.trim();
+      //const form = document.querySelector('#rsvp-form');
+
+    rsvpForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevents page refresh
+
+      // validation
+      const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
         const attending = document.getElementById('attending').value;
         const guests = document.getElementById('guests').value;
-        const notes = document.getElementById('notes').value.trim();
+       
 
         let valid = true;
         ERR_NAME.textContent = '';
@@ -1184,17 +1171,22 @@
 
         if (!valid) return;
 
-        const responses = loadResponses();
-        responses.push({
-          name, email, attending, guests: Number(guests || 0), notes, timestamp: new Date().toISOString()
+          const scriptURL = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3aDlBcFB3UHBGSkdsNklrcG54QVhvM05ZcDg2QUZIMmo4bGtyaDJoNzN3Z2VwX1FYeDU1VVptS0tqeVI0OWhWdzYvZXhlYw';
+          
+          const formData = new FormData(rsvpForm); // Extract data from form
+          const data = Object.fromEntries(formData); // Convert to plain object
+          
+          fetch(atob(scriptURL), { method: 'POST', body: formData})
+          .then(response => {
+            alert('Success! Thanks for responding.')
+            rsvpForm.reset();
+            closeRSVP();
+          })
+          .catch(error => console.error('Error!', error.message))
+          .finally(()=>{
+           
+          });
         });
-        saveResponses(responses);
-
-        // Feedback
-        alert(strings[lang].savedAlert);
-        rsvpForm.reset();
-        closeRSVP();
-      });
 
       // Export CSV
       function toCSV(rows) {
@@ -1210,27 +1202,8 @@
         return lines.join('\n');
       }
 
-      exportCsvBtn.addEventListener('click', () => {
-        const rows = loadResponses();
-        if (!rows.length) { alert(strings[lang].noExport); return; }
-        const csv = toCSV(rows);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'rsvp_responses.csv';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      });
-
-      clearResponsesBtn.addEventListener('click', () => {
-        if (confirm(strings[lang].clearConfirm)) {
-          localStorage.removeItem('rsvp_responses');
-          saveResponses([]);
-        }
-      });
+     
+    
 
       // Print invite button
       document.getElementById('print-invite').addEventListener('click', () => {
